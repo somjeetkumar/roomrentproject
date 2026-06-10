@@ -405,6 +405,12 @@ class PaymentView(LoginRequiredMixin, TemplateView):
 
 
 
+class AdminDashboardView(LoginRequiredMixin,TemplateView):
+    # Specify the path to your dashboard HTML template
+    template_name = 'deshbord/deashbord.html'
+
+
+
 
 
 

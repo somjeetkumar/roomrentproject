@@ -1,0 +1,182 @@
+{% load static %}
+{% include 'components/loader.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Room - Admin Control Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-orange: #ff5a01;
+            --primary-blue: #007bff;
+        }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        /* Sidebar Styling */
+        .sidebar { min-height: 100vh; background: #fff; border-right: 1px solid #dee2e6; }
+        .nav-link { color: #495057; padding: 12px 20px; border-radius: 5px; margin-bottom: 5px; font-weight: 500; transition: all 0.2s ease; }
+        .nav-link:hover, .nav-link.active { background-color: var(--primary-orange); color: white !important; }
+        .nav-link.back-web-btn { background-color: var(--primary-blue); color: white; }
+        .nav-link.back-web-btn:hover { background-color: #0056b3; color: white !important; }
+        
+        /* Dashboard Home Components */
+        .stat-card { border: none; border-radius: 12px; transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .btn-orange { background-color: var(--primary-orange); color: white; border: none; font-weight: 500; }
+        .btn-orange:hover { background-color: #e44d00; color: white; }
+        
+        .activity-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .bg-urgent { background-color: #dc3545; }
+        .bg-info-blue { background-color: #0dcaf0; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3 shadow-sm">
+            <div class="mb-4 text-center">
+                <h4 class="fw-bold text-dark"><span style="color:var(--primary-orange)">FIND</span> ROOM</h4>
+                <span class="badge bg-dark text-uppercase px-2 py-1" style="font-size: 0.7rem;">Control Center</span>
+            </div>
+            <ul class="nav flex-column" id="sidebarMenu">
+                <li class="nav-item"><a class="nav-link active" href="#"><i class="fas fa-chart-line me-2"></i> Overview Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'RoomList' %}"><i class="fas fa-bed me-2"></i> My Rooms</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'renterList' %}"><i class="fas fa-user-friends me-2"></i> Renters</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'ownerList' %}"><i class="fas fa-user-shield me-2"></i> Owners</a></li>
+                <li class="nav-item"><a class="nav-link back-web-btn" href="{% url 'home' %}"><i class="fas fa-door-open me-2"></i> Back to website</a></li>
+                <hr>
+                <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <div>
+                    <h1 class="h2 fw-bold mb-0">Dashboard Hub</h1>
+                    <p class="text-muted small">System snapshots, pending moderation tasks, and live tenant inquiries.</p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-outline-secondary btn-sm"><i class="fas fa-download me-1"></i> System Report</button>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="card stat-card shadow-sm p-3 bg-white border-start border-danger border-4">
+                        <div class="d-flex align-items-center">
+                            <div class="p-3 bg-light rounded-circle me-3"><i class="fas fa-clock text-danger fs-4"></i></div>
+                            <div>
+                                <h6 class="text-muted mb-0 small text-uppercase fw-bold">Pending Approvals</h6>
+                                <h3 class="fw-bold mb-0 mt-1">{{ pending_approvals|default:"7" }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="card stat-card shadow-sm p-3 bg-white border-start border-primary border-4">
+                        <div class="d-flex align-items-center">
+                            <div class="p-3 bg-light rounded-circle me-3"><i class="fas fa-comments text-primary fs-4"></i></div>
+                            <div>
+                                <h6 class="text-muted mb-0 small text-uppercase fw-bold">Inquiries (Last 24h)</h6>
+                                <h3 class="fw-bold mb-0 mt-1">{{ daily_inquiries|default:"32" }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="card stat-card shadow-sm p-3 bg-white border-start border-success border-4">
+                        <div class="d-flex align-items-center">
+                            <div class="p-3 bg-light rounded-circle me-3"><i class="fas fa-wallet text-success fs-4"></i></div>
+                            <div>
+                                <h6 class="text-muted mb-0 small text-uppercase fw-bold">Estimated Platform Value</h6>
+                                <h3 class="fw-bold mb-0 mt-1">₹{{ platform_value|default:"85,000" }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-7 mb-4">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="mb-0 fw-bold text-dark"><i class="fas fa-exclamation-circle text-warning me-2"></i>Listings Requiring Review</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light small text-muted">
+                                        <tr>
+                                            <th class="ps-3">Property Title</th>
+                                            <th>Submitted By</th>
+                                            <th class="text-end pe-3">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% block content %}
+                                        <tr>
+                                            <td class="ps-3">
+                                                <span class="fw-bold d-block">Coaching Center PG Room</span>
+                                                <span class="text-muted small">Suratgarh Hub</span>
+                                            </td>
+                                            <td>Sunita Verma (Owner)</td>
+                                            <td class="text-end pe-3">
+                                                <button class="btn btn-sm btn-orange py-1 px-2">Verify</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="ps-3">
+                                                <span class="fw-bold d-block">Luxury 2 BHK Independent Flat</span>
+                                                <span class="text-muted small">Sector 5</span>
+                                            </td>
+                                            <td>Rakesh Meena (Owner)</td>
+                                            <td class="text-end pe-3">
+                                                <button class="btn btn-sm btn-orange py-1 px-2">Verify</button>
+                                            </td>
+                                        </tr>
+                                        {% endblock %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5 mb-4">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="mb-0 fw-bold text-dark"><i class="fas fa-bolt text-info me-2"></i>Live Activity Feed</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <div class="me-3"><span class="activity-dot bg-urgent mt-1"></span></div>
+                                <div>
+                                    <p class="mb-0 small fw-bold">New Renter Signup</p>
+                                    <span class="text-muted d-block unique-small" style="font-size:0.75rem;">Amit Kumar registered via phone profile setup.</span>
+                                </div>
+                            </div>
+                            <div class="d-flex mb-3">
+                                <div class="me-3"><span class="activity-dot bg-info-blue mt-1"></span></div>
+                                <div>
+                                    <p class="mb-0 small fw-bold">Room Inquiry Dispatched</p>
+                                    <span class="text-muted d-block unique-small" style="font-size:0.75rem;">Renter sent call request for listing #FR-8321.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script src="{% static 'js/loader.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

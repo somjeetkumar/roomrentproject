@@ -27,7 +27,8 @@ urlpatterns = [
     path("ownerList/", Owner_list.as_view(), name='ownerList'),
     path("RoomList/", Room_list.as_view(), name='RoomList'),
     path('DeleteRoom_admin/<int:pk>/',DeleteRoom_admin.as_view(), name='DeleteRoom_admin'),
-    path('adminDeshbord/',AdminDashboardView.as_view(), name='adminDeshbord')
+    path('adminDeshbord/',AdminDashboardView.as_view(), name='adminDeshbord'),
+    path('dbtest/',test_db,name='dbtest')
     # 
 ]
 

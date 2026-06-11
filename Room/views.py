@@ -25,6 +25,12 @@ import json
 
 
 
+def test_db(request):
+    return HttpResponse(str(settings.DATABASES))
+
+
+
+
 def dashboard_stats(request):
     if request.user.is_authenticated:
         return {

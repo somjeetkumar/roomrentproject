@@ -18,3 +18,8 @@ django-widget-tweaks==1.5.1
 
 cloudinary==1.41.0
 django-cloudinary-storage==0.3.0
+
+
+
+dj-database-url
+python-dotenv

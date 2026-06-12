@@ -44,7 +44,7 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = 'django-insecure-=g7t$=7!dgldl98z#jwt5g(%caa_e5)7z9=z^663#q-_av1u%b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -181,9 +181,8 @@ STORAGES = {
     },
 }
 
-RAZORPAY_KEY_ID = "rzp_test_SQwz17owTvEaGL"
-RAZORPAY_KEY_SECRET = "wEGDWfc3E9GjIBYCzaqs79gs"
-
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -192,8 +191,8 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = "somjeetkumar30@gmail.com"
-EMAIL_HOST_PASSWORD = "oknp mhax urst idiw"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 
 # ATM_number = 4357086018003848

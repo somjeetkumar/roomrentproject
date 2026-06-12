@@ -20,6 +20,8 @@ from django.contrib import admin
 from django.urls import path,include
 from django.shortcuts import redirect
 
+handler404 = 'Room.views.custom_404'
+
 
 
 urlpatterns = [

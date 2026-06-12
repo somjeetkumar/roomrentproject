@@ -6,6 +6,8 @@ from django.views.generic import CreateView,DeleteView,DetailView,UpdateView,Lis
 from .models import UserModel,Room,Room_Image,Payment,Otp
 import random
 import time
+from django.core.paginator import Paginator
+
 
 from .uitility import room_number,send_email_for_user
 from django.http import HttpResponse
@@ -365,50 +367,54 @@ class RoomDeatils(LoginRequiredMixin,DetailView):
 
 
 
-
 class PaymentView(LoginRequiredMixin, TemplateView):
-
     template_name = "room/payment.html"
+
+    def get(self, request, *args, **kwargs):
+        room = get_object_or_404(Room, pk=self.kwargs["pk"])
+
+        if not room.available:
+            return redirect("home")
+
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         room = get_object_or_404(Room, pk=self.kwargs["pk"])
-        if room.available == False:
-            return redirect('home')
+        print(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET)
+
         client = razorpay.Client(
-            auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
+            auth=(
+                settings.RAZORPAY_KEY_ID,
+                settings.RAZORPAY_KEY_SECRET
+            )
         )
 
-        amount = 4000
+        room_price = 4000  # Rupees
 
         order = client.order.create({
-            "amount": amount,
-            "currency": "INR",
-            "payment_capture": 1
+            "amount": room_price * 100,  # Convert to paise
+            "currency": "INR"
         })
-        
 
         payment = Payment.objects.create(
             user=self.request.user,
             room=room,
-            amount=amount,
+            amount=room_price,
             razorpay_order_id=order["id"]
+              # adjust according to your model
         )
-        room.available = False
-        room.save()
 
-        context["order"] = order
-        # print(order,'===================')
-        context["payment"] = payment
-        context["razorpay_key"] = settings.RAZORPAY_KEY_ID
+        context.update({
+            "room": room,
+            "payment": payment,
+            "order": order,
+            "razorpay_key": settings.RAZORPAY_KEY_ID,
+            "amount": room_price,
+        })
 
         return context
-
-
-
-
-
 
 
 class AdminDashboardView(LoginRequiredMixin,TemplateView):
@@ -513,20 +519,32 @@ class Room_list(ListView):
     model = Room
     template_name = 'deshbord/room_List.html'
     context_object_name = 'rooms'
-    def get_context_data(self, **kwargs):   
-        # print(self.request.user.get_all_permissions())
+
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        rooms = Room.objects.all()
+
+        rooms = Room.objects.all().order_by('-id')
+
+        paginator = Paginator(rooms, 10)  # 10 rooms per page
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
         room_data = []
-        for room in rooms:
-            image =Room_Image.objects.filter(room=room, check_image=True).first()
+
+        for room in page_obj:  # ONLY current page records
+            image = Room_Image.objects.filter(
+                room=room,
+                check_image=True
+            ).first()
+
             room_data.append({
-                'room':room,
-                "image":image
+                'room': room,
+                'image': image
             })
-        #     print(room,image,' - -- - ')
+
         context['rooms'] = room_data
-        
+        context['page_obj'] = page_obj
+
         return context
 
 
@@ -566,3 +584,8 @@ class DeleteRoom_admin(View):
         room.delete()
         return redirect('RoomList')
         
+
+
+
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)        

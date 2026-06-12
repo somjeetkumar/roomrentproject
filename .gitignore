@@ -53,3 +53,13 @@ node_modules/
 
 # Data Export Files
 data.json
+
+# Local deployment and project documentation files
+.dockerignore
+.env.example
+Dockerfile
+Procfile
+README.md
+SECURITY.md
+docs/
+Room/migrations/0012_alter_room_available.py

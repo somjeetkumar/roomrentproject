@@ -11,16 +11,30 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 
-import cloudinary
+
 from pathlib import Path
 import os
 from dotenv import load_dotenv
 import dj_database_url
 
-load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+
+
+
+
+
+
+
+
+load_dotenv(BASE_DIR / ".env")
+
+
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -33,6 +47,7 @@ SECRET_KEY = 'django-insecure-=g7t$=7!dgldl98z#jwt5g(%caa_e5)7z9=z^663#q-_av1u%b
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+
 
 
 # Application definition
@@ -150,6 +165,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'Room.UserModel'
 
 
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": os.getenv("CLOUDINARY_API_KEY"),
+    "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"),
+}
+
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 RAZORPAY_KEY_ID = "rzp_test_SQwz17owTvEaGL"
 RAZORPAY_KEY_SECRET = "wEGDWfc3E9GjIBYCzaqs79gs"
@@ -176,15 +206,12 @@ PASSWORD_HASHERS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-cloudinary.config(
-    cloud_name="doqdymvvj",
-    api_key="411276916538423",
-    api_secret="Wu5Vap1pD2c13mjC3-27KUeN1Xg"
-)
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
+
+
 
 
 

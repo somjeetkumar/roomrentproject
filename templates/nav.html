@@ -13,9 +13,9 @@
         </a>
         
         <div class="ms-auto d-flex align-items-center gap-3">
-            <a href="#" class="nav-link d-none d-md-block fw-semibold text-secondary">Contact us</a>
-
+            
             {% if not request.user.is_authenticated %}
+            <a href="#" class="nav-link d-none d-md-block fw-semibold text-secondary">Contact us</a>
             <a href="" class="btn btn-add-room px-4 rounded-pill fw-semibold">
                     Add room
                 </a>
@@ -23,7 +23,7 @@
 
             {% if request.user.is_authenticated %}
 
-            {% if request.user.groups.all.0.name == "Admin" or request.user.groups.all.0.name == "Owner" %}
+            {% if request.user.groups.all.0.name == "Owner" %}
                 <a href="{% url 'room_upload' %}" class="btn btn-add-room px-4 rounded-pill fw-semibold">
                     Add room
                 </a>
@@ -32,7 +32,12 @@
             
             {% if request.user.is_authenticated %}
                 {% if request.user.groups.all.0.name == "Admin" or request.user.is_superuser %}
+
+                <a href="{% url 'room_upload' %}" class="btn btn-add-room px-4 rounded-pill fw-semibold">
+                    Add room
+                </a>                
                     <a href="{% url 'RoomList' %}" class="nav-link text-primary fw-semibold">Dashboard</a>
+
                 {% endif %}
             {% endif %}
 

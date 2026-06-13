@@ -44,7 +44,7 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = 'django-insecure-=g7t$=7!dgldl98z#jwt5g(%caa_e5)7z9=z^663#q-_av1u%b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -215,4 +215,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 
-LOGIN_URL = "/room/login/"
+LOGIN_URL = "/login/"

@@ -201,7 +201,12 @@
                 </li>
                 <hr>
                 <li class="nav-item">
-                    <a class="nav-link text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+                                    
+                <form method="post" action="{% url 'logout' %}" class="m-0 p-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link nav-link text-danger fw-semibold p-0 border-0">Logout</button>
+                </form>
+                    
                 </li>
             </ul>
         </nav>
